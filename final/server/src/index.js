@@ -11,6 +11,13 @@ const LaunchAPI = require('./datasources/launch');
 const UserAPI = require('./datasources/user');
 
 const internalEngineDemo = require('./engine-demo');
+const { bootstrap: bootstrapGlobalAgent } = require('global-agent');
+
+console.log("USE_PROXY=" + process.env.USE_PROXY)
+if (process.env.USE_PROXY) {
+    // Setup global support for environment variable based proxy configuration.
+    bootstrapGlobalAgent();
+}
 
 // creates a sequelize connection once. NOT for every request
 const store = createStore();
@@ -53,10 +60,10 @@ const server = new ApolloServer({
 // Start our server if we're not in a test env.
 // if we're in a test env, we'll manually start it in a test
 if (process.env.NODE_ENV !== 'test') {
-  server.listen().then(() => {
+  server.listen({port: 4010}).then(() => {
     console.log(`
       Server is running!
-      Listening on port 4000
+      Listening on port 4010
       Query at https://studio.apollographql.com/dev
     `);
   });
